@@ -10,10 +10,10 @@
 #define _PIXEL_H
 typedef struct pixel_s
 {
-	char red;
-	char green;
-	char blue;
-	char alpha;
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
+	unsigned char alpha;
 
 } pixel;
 

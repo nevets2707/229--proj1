@@ -1,26 +1,17 @@
 #include <stdio.h>
 #include "pixel.h"
 #include "image.h"
+#include <stdio.h>
+#include "openFile.h"
+#include "saveFile.h"
+#include "image.h"
+#include "pixel.h"
 
-int main(void)
+int main(int argc, char** argv)
 {
-
-	pixel a;
-	a.red = 1;
-	int b;
-	FILE* in;
-	in  = ("insanity.simp", "rb");
 	
+	image* img = open(argv[1]);
+	save(img, argv[2]);
 
-	/*printf("%d\n", b);
-		printf("%d\n", sizeof(long int));
-	printf("%d\n", sizeof(int));
-	printf("%d\n", sizeof(int*));
-	printf("%d\n", a.red);
-	*/
-
-	printf("%d\n", sizeof(int));
-
-		
 	return 0;
 }

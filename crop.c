@@ -14,41 +14,47 @@
 int main(int argc, char** argv)
 {
 	image* img;
-	image* newImg;
+	image* img2;
 	int i, j;
 	int xpos = 0;
 	int ypos = 0;
+	int x = atoi(argv[3]);
+	int y = atoi(argv[4]);
+	int w = atoi(argv[5]);
+	int h = atoi(argv[6]);
 
-	if(argc < 7)
+
+	if(argc != 7)
 	{
 		return 1;
 	}
+
  
 	img = open(argv[1]);
-	newImg = (image*)malloc(sizeof(image));
+	img2 = newImg(w, h);
 
-	newImg->width = atoi(argv[3]);
-	newImg->height = atoi(argv[4]);
+	printf("Start at (%s,%s)\n", argv[3], argv[4]);
 	
-	for(i = 0; i < newImg->width; i++)
+	for(j = 0; j < img2->height; j++)
 	{
-		newImg->pix[i] = (pixel*)malloc(newImg->height * sizeof(pixel));
-	}
-
-	for(i = atoi(argv[3]); i < newImg->width; i++)
-	{
-		for(j = atoi(argv[4]); j < newImg->height; j++)
-		{
-			newImg->pix[xpos][ypos].red = img->pix[i][j].red;
-			newImg->pix[xpos][ypos].green = img->pix[i][j].green;
-			newImg->pix[xpos][ypos].blue = img->pix[i][j].blue;
-			newImg->pix[xpos][ypos].alpha = img->pix[i][j].alpha;
-			ypos++;
+		for(i = 0; i < img2->width; i++)
+			{
+			img2->pix[i][j].red = img->pix[i + x][j + y].red;
+			img2->pix[i][j].green = img->pix[i + x][j + y].green;
+			img2->pix[i][j].blue = img->pix[i + x][j + y].blue;
+			img2->pix[i][j].alpha = img->pix[i + x][j + y].alpha;
+		
+	/*		printf("(%d,%d)to(%d,%d) ", i , j,xpos, ypos);
+			ypos++; */
 		}
-		xpos++;
+	/*	xpos++;
+		ypos = 0; */
 	}
 
-	save(newImg, argv[2]);
+/*	printf("End at (%d,%d)\n", i, j);
+	printf("d\n");
+*/
+	save(img2, argv[2]);
 
 	return 0;
 }

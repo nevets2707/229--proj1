@@ -14,6 +14,7 @@ image* open(char* file)
 
 {
 	FILE* infile;
+	char* newFile;
 	image* temp;
 	int i, j;
 	printf("openfile: %s\n", file);
@@ -22,12 +23,11 @@ image* open(char* file)
 	temp = (image*)malloc(sizeof(image));
 	infile = fopen(file, "rb");
 
-	if(infile == 0)
+	while(infile == 0)
 	{
-		printf("File failed to open\n");
-		/* TODO throw error */
-		temp = 0;
-		return temp;
+		printf("Invalid file. Please enter a new file.\n>");
+		scanf("%s", newFile);
+		infile = fopen(newFile, "rb");
 	}
 		
 	if(!feof(infile))
@@ -36,8 +36,7 @@ image* open(char* file)
 		fread(&(temp->width), sizeof(int), 1, infile);
 		printf("width : %d\n", temp->width);
 		fread(&(temp->height), sizeof(int), 1, infile);
-	
-		temp->pixelCount = temp->width * temp->height;
+		printf("height : %d\n", temp->height);	
 		temp->pix = (pixel**)malloc(temp->width * sizeof(pixel*));
 
 		for(i = 0; i < temp->width; i++)

@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	int avg;
 
 
-	if(argc < 3)
+	if(argc != 3)
 	{
 		return 1;
 	}
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 		for(j = 0; j < img->height; j++)
 		{
 		
-			int r, g, b;
+			unsigned char r, g, b;
 			r = img->pix[i][j].red;
 			g = img->pix[i][j].green;
 			b = img->pix[i][j].blue;

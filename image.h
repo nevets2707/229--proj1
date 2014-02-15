@@ -2,6 +2,7 @@
 
 #ifndef _IMAGE_H
 #define _IMAGE_H
+#include "image.h"
 typedef struct image_s
 {
 
@@ -12,4 +13,6 @@ typedef struct image_s
 	
 
 } image;
+
+image* newImg(int w, int h);
 #endif
