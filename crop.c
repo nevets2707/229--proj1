@@ -16,45 +16,55 @@ int main(int argc, char** argv)
 	image* img;
 	image* img2;
 	int i, j;
-	int xpos = 0;
-	int ypos = 0;
-	int x = atoi(argv[3]);
-	int y = atoi(argv[4]);
-	int w = atoi(argv[5]);
-	int h = atoi(argv[6]);
-
-
+	int x, y, w, h;
 	if(argc != 7)
 	{
+		printf("Invalid number of arguments. Please try again\n");
 		return 1;
 	}
+	
+	x = atoi(argv[3]);
+	y = atoi(argv[4]);
+	w = atoi(argv[5]);
+	h = atoi(argv[6]);
 
- 
+	while(x < 0)
+	{
+		printf("Please enter a valid x position:\n>");
+		scanf("%d", &x);
+	}
+	while(y < 0)
+	{
+		printf("Please enter a valid y opsition:\n>");
+		scanf("%d", &y);
+	}
+	
 	img = open(argv[1]);
+	
+	if(w + x > img->width)
+	{
+		w = img->width - x - 1;
+	}
+	if(h + y > img->height)
+	{
+		h = img->height - y - 1;
+	}
+	
 	img2 = newImg(w, h);
 
-	printf("Start at (%s,%s)\n", argv[3], argv[4]);
-	
-	for(j = 0; j < img2->height; j++)
+	for(i = 0; i < img2->height; i++)
 	{
-		for(i = 0; i < img2->width; i++)
-			{
-			img2->pix[i][j].red = img->pix[i + x][j + y].red;
-			img2->pix[i][j].green = img->pix[i + x][j + y].green;
-			img2->pix[i][j].blue = img->pix[i + x][j + y].blue;
-			img2->pix[i][j].alpha = img->pix[i + x][j + y].alpha;
-		
-	/*		printf("(%d,%d)to(%d,%d) ", i , j,xpos, ypos);
-			ypos++; */
+		for(j = 0; j < img2->width; j++)
+		{
+			img2->pix[i][j].red = img->pix[i + y][j + x].red;
+			img2->pix[i][j].green = img->pix[i + y][j + x].green;
+			img2->pix[i][j].blue = img->pix[i + y][j + x].blue;
+			img2->pix[i][j].alpha = img->pix[i + y][j + x].alpha;
 		}
-	/*	xpos++;
-		ypos = 0; */
 	}
 
-/*	printf("End at (%d,%d)\n", i, j);
-	printf("d\n");
-*/
 	save(img2, argv[2]);
-
+	freeImg(img);
+	freeImg(img2);
 	return 0;
 }

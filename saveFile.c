@@ -15,9 +15,9 @@ int save(image* img, char* file)
 	fwrite(&(img->width), sizeof(int), 1, out);
 	fwrite(&(img->height), sizeof(int), 1, out);
 
-	for(i = 0; i < img->width; i++)
+	for(i = 0; i < img->height; i++)
 	{
-		for(j = 0; j < img->height; j++)
+		for(j = 0; j < img->width; j++)
 		{
 			fwrite(&(img->pix[i][j].red), sizeof(char), 1, out);
 			fwrite(&(img->pix[i][j].green), sizeof(char), 1, out);
@@ -29,11 +29,4 @@ int save(image* img, char* file)
 	fclose(out);
 
 	return 0;
-
-
 }
-
-
-
-
-

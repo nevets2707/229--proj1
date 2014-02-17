@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
 	if(argc != 4)
 	{
-		printf("Wrong arguments");
+		printf("Invalid number of arguments. Please try again\n");
 		return 1;
 	}
 
@@ -57,15 +57,17 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		/* error */
+		printf("Incorrect pattern. Please try again.\n");
+		return 1;
+		/* TODO can I just do this??? */
 	}
 
 	switch(opt)
 	{
 		case 1:
-			for(i = 0; i < img->width; i++)
+			for(i = 0; i < img2->height; i++)
 			{
-				for(j = 0; j < img->height; j++)
+				for(j = 0; j < img2->width; j++)
 				{
 					img2->pix[i][j].red = img->pix[i][j].blue;
 					img2->pix[i][j].green = img->pix[i][j].red;
@@ -76,9 +78,9 @@ int main(int argc, char** argv)
 			break;
 
 		case 2:
-			for(i = 0; i < img->width; i++)
+			for(i = 0; i < img2->height; i++)
 			{
-				for(j = 0; j < img->height; j++)
+				for(j = 0; j < img2->width; j++)
 				{
 					img2->pix[i][j].red = img->pix[i][j].green;
 					img2->pix[i][j].green = img->pix[i][j].blue;
@@ -89,9 +91,9 @@ int main(int argc, char** argv)
 			break;
 
 		case 3:
-			for(i = 0; i < img->width; i++)
+			for(i = 0; i < img2->height; i++)
 			{
-				for(j = 0; j < img->height; j++)
+				for(j = 0; j < img2->width; j++)
 				{
 					img2->pix[i][j].red = img->pix[i][j].green;
 					img2->pix[i][j].green = img->pix[i][j].red;
@@ -102,9 +104,9 @@ int main(int argc, char** argv)
 			break;
 
 		case 4:
-			for(i = 0; i < img->width; i++)
+			for(i = 0; i < img2->height; i++)
 			{
-				for(j = 0; j < img->height; j++)
+				for(j = 0; j < img2->width; j++)
 				{
 					img2->pix[i][j].red = img->pix[i][j].blue;
 					img2->pix[i][j].green = img->pix[i][j].green;
@@ -116,9 +118,9 @@ int main(int argc, char** argv)
 			break;
 
 		case 5:
-			for(i = 0; i < img->width; i++)
+			for(i = 0; i < img2->height; i++)
 			{
-				for(j = 0; j < img->height; j++)
+				for(j = 0; j < img2->width; j++)
 				{
 					img2->pix[i][j].red = img->pix[i][j].red;
 					img2->pix[i][j].green = img->pix[i][j].blue;
@@ -131,7 +133,8 @@ int main(int argc, char** argv)
 	}
 
 	save(img2, argv[2]);
-
+	freeImg(img);
+	freeImg(img2);
 
 	return 0;
 }

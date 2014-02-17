@@ -15,26 +15,23 @@
 
 int main(int argc, char** argv)
 {
-
 	image* img;
 	int i;
 	int j;
 	int avg;
 
-
 	if(argc != 3)
 	{
+		printf("Invalid number of arguments. Please try again\n");
 		return 1;
 	}
 
-	printf("The image file is %s\n", argv[1]);
 	img  = open(argv[1]);
 
-	for(i = 0; i < img->width; i++)
+	for(i = 0; i < img->height; i++)
 	{
-		for(j = 0; j < img->height; j++)
+		for(j = 0; j < img->width; j++)
 		{
-		
 			unsigned char r, g, b;
 			r = img->pix[i][j].red;
 			g = img->pix[i][j].green;
@@ -47,15 +44,9 @@ int main(int argc, char** argv)
 			img->pix[i][j].blue = avg;
 		
 		}
-
-
 	}
 
-	printf("Height: %d \nWidth: %d \n", img->height, img->width);
-
-	printf("Saving to %s\n", argv[2]);
 	save(img, argv[2]);
-
+	freeImg(img);
 	return 0;
-
 }

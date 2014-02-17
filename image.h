@@ -15,4 +15,5 @@ typedef struct image_s
 } image;
 
 image* newImg(int w, int h);
+void freeImg(image* img);
 #endif
