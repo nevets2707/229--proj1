@@ -4,7 +4,7 @@
 all : crop bw overlay colorshift
 
 clean : 
-	rm *.o
+	rm *.o bw crop colorshift overlay 
 
 
 openFile.o : openFile.c 
@@ -40,8 +40,6 @@ overlay : overlay.o openFile.o
 colorshift : colorshift.o openFile.o
 	gcc -ansi -pedantic -o colorshift colorshift.o openFile.o saveFile.o image.o
 
-test.o : test.c
-	gcc -ansi -pedantic -g -c test.c
+tarball : 
+	tar czf 978378401.tar.gzip *.c *.h Makefile README
 
-test : test.o
-	gcc -ansi -pedantic -o test test.o openFile.o saveFile.o

@@ -19,10 +19,10 @@ int save(image* img, char* file)
 	{
 		for(j = 0; j < img->width; j++)
 		{
-			fwrite(&(img->pix[i][j].red), sizeof(char), 1, out);
-			fwrite(&(img->pix[i][j].green), sizeof(char), 1, out);
-			fwrite(&(img->pix[i][j].blue), sizeof(char), 1, out);
-			fwrite(&(img->pix[i][j].alpha), sizeof(char), 1, out);
+			fputc(img->pix[i][j].red, out);
+			fputc(img->pix[i][j].green, out);
+			fputc(img->pix[i][j].blue, out);
+			fputc(img->pix[i][j].alpha, out);
 		}
 	}
 
