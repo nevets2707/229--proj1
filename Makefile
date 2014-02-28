@@ -1,7 +1,7 @@
 # Make file for project 1
 
 
-all : crop bw overlay colorshift
+all : crop bw overlay colorshift meme
 
 clean : 
 	rm *.o bw crop colorshift overlay 
@@ -39,6 +39,15 @@ overlay : overlay.o openFile.o
 
 colorshift : colorshift.o openFile.o
 	gcc -ansi -pedantic -o colorshift colorshift.o openFile.o saveFile.o image.o
+
+font.o : font.h font.c letter.h
+	gcc -ansi -pedantic -g -c font.c
+
+meme.o : meme.c
+	gcc -ansi -pedantic -g -c meme.c
+
+meme : font.o meme.o
+	gcc -ansi -pedantic -o meme font.o meme.o
 
 tarball : 
 	tar czf 978378401.tar.gzip *.c *.h Makefile README
