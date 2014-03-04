@@ -51,4 +51,5 @@ meme : font.o meme.o
 
 tarball : 
 	tar czf 978378401.tar.gzip *.c *.h Makefile README
-
+test : test.c
+	gcc -ansi -pedantic -g -o test test.c font.o

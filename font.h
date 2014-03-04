@@ -12,6 +12,6 @@ typedef struct font_s
 
 } font;
 
-font openFont(char* file);
+font* openFont(char* file);
 
 #endif

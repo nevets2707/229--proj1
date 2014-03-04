@@ -11,8 +11,12 @@ typedef struct meme_s
 	int topH;
 	int botW;
 	int botH;
-	font* fonts; /* maybe */
+	font** fonts; /* maybe */
 } meme;
+
+meme** readMemeFile(char* file);
+
+int readActFile(char* file, meme** memes);
 
 #endif
 
