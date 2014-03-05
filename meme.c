@@ -114,6 +114,7 @@ meme** readMemeFile(char* file)
 				buffer2 = &(buffer[charPos]);
 				memes[i]->name = (char*)malloc((strlen(buffer2) + 1) * sizeof(char));
 				strcpy(memes[i]->name, buffer2);
+				memes[i]->loc = (pos**)malloc(sizeof(pos*));
 			}
 		}
 		else if(strcmp("FONTS", buffer2) == 0)
@@ -155,35 +156,29 @@ meme** readMemeFile(char* file)
 						memes[i]->file = (char*)malloc((strlen(buffer2) - 1) * sizeof(char));
 						strcpy(memes[i]->file, buffer2);
 					}
-					else if(strcmp("TOP", buffer2) == 0)
-					{
-						length = strlen(buffer2);
-						charPos += length + 1;
-						buffer2 = &(buffer[charPos]);
-						memes[i]->topW = atoi(buffer2);
+					else{
+						j = (sizeof(memes[i]->loc) / sizeof(pos*)) - 1;
+						memes[i]->loc = (pos**)realloc(memes[i]->loc, sizeof(memes[i]->loc) + sizeof(pos*));
 						
 						length = strlen(buffer2);
 						charPos += length + 1;
 						buffer2 = &(buffer[charPos]);
-						memes[i]->topH = atoi(buffer2);
-					}
-					else if(strcmp("BOTTOM", buffer2) == 0)
-					{
-						length = strlen(buffer2);					
-						charPos += length + 1;
-						buffer2 = &(buffer[charPos]);
-						memes[i]->botW = atoi(buffer2);
-	
+						
+						memes[i]->loc[j] = (pos*)malloc(sizeof(pos));
+						memes[i]->loc[j]->name = (char*)malloc(strlen(buffer2) * sizeof(char));
+						strcpy(memes[i]->loc[j]->name, buffer2);
+						
 						length = strlen(buffer2);
 						charPos += length + 1;
 						buffer2 = &(buffer[charPos]);
-						memes[i]->botH = atoi(buffer2);
-					}
-					else
-					{
-						printf("File error 2\n");
-						memes = 0;
-						return memes;
+
+						memes[i]->loc[j]->x = atoi(buffer2);
+
+						length = strlen(buffer2);
+						charPos += lentht + 1;
+						buffer2 = &(buffer[charPos]);
+
+						memes[i]->loc[j]->y = atoi(buffer2);
 					}
 					break;
 				}
@@ -192,6 +187,7 @@ meme** readMemeFile(char* file)
 	}
 	for(i = 0; i < size; i++)
 	{
+		memes[i]->fonts = (font**)malloc(sizeof(fonts));
 		memes[i]->fonts = fonts; /* definitely gonna be a problem */
 	}
 	return memes;
@@ -277,16 +273,54 @@ int readActFile(char* file, meme** memes)
 
 }
 
-image* textImg(char* in, meme m)
+image* textImg(char* in, meme* m, font* f)
 {
 	image* text;
-	int i;
+	image* nextLetter;
+	int i, j;
 	char c;
 
 	text = newImg(0,0);
 
 	for(i = 0; i < strlen(in); i++)
 	{	
-		
+		for(j = 0; j <= f->charCount; j++)
+		{
+			if(in[i] == f->list[j].value)
+			{
+				nextLetter = crop(f->fileLocation, f->list[j].x, f->list[j].y, f->list[j].w, f->list[j].h);	
+				/* add to text image */
+				addText(text, nextLetter);			
+				break;
+			}
+			if(j == f->charCount)
+			{
+				printf("Cannot use char: %c", in[i]);
+				text = 0;
+				return text;
+			}
+		}
 	}
+	return text;
+
+}
+
+void addText(image* toChange, image* toAdd)
+{
+	int i, x, y;
+	x = toChange->width;
+	y = toChange->height;
+	
+	toChange->width += toAdd->width;
+	toChange->height += toAdd->height;
+
+	toChange->pix = (pixel**)realloc(toChange->pix, sizeof(toChange->pix) + (toAdd->height * sizeof(pixel*)));
+	
+	for(i = 0; i < toChange->height; i++)
+	{
+		toChange->pix[i] = (pixel*)realloc(toChange->pix[i], sizeof(toChange->pix[i]) + (toAdd->width * sizeof(pixel)));
+	}
+
+	
+	
 }

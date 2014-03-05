@@ -7,7 +7,6 @@ int main(int argc, char** argv)
 {
 
 	FILE* in = fopen("memes.mem", "r");
-	char c;
 	int i;
 	char* buffer;
 	font* f;

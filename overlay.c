@@ -9,6 +9,7 @@
 #include "openFile.h"
 #include "saveFile.h"
 
+/*
 int main(int argc, char** argv)
 {
 
@@ -88,3 +89,4 @@ int main(int argc, char** argv)
 	freeImg(img3);
 	return 0;
 }
+*/ /* What do I do with this method */

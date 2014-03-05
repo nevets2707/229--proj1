@@ -11,6 +11,7 @@
 #include "openFile.h"
 #include "saveFile.h"
 
+/*
 int main(int argc, char** argv)
 {
 	image* img;
@@ -67,4 +68,41 @@ int main(int argc, char** argv)
 	freeImg(img);
 	freeImg(img2);
 	return 0;
+}
+
+*/ /* What do I do with this method */
+
+image* crop(char* file, int x, int y, int w, int h)
+{
+	image* img;
+	image* img2;
+	int i, j;
+
+	
+	img = open(file);
+	
+	if(w + x > img->width)
+	{
+		w = img->width - x - 1;
+	}
+	if(h + y > img->height)
+	{
+		h = img->height - y - 1;
+	}
+	
+	img2 = newImg(w, h);
+
+	for(i = 0; i < img2->height; i++)
+	{
+		for(j = 0; j < img2->width; j++)
+		{
+			img2->pix[i][j].red = img->pix[i + y][j + x].red;
+			img2->pix[i][j].green = img->pix[i + y][j + x].green;
+			img2->pix[i][j].blue = img->pix[i + y][j + x].blue;
+			img2->pix[i][j].alpha = img->pix[i + y][j + x].alpha;
+		}
+	}
+
+	freeImg(img);
+	return img2;
 }

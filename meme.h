@@ -7,12 +7,16 @@ typedef struct meme_s
 {
 	char* name;
 	char* file;
-	int topW;
-	int topH;
-	int botW;
-	int botH;
+	pos** loc;
 	font** fonts; /* maybe */
 } meme;
+
+typedef struct pos_s
+{
+	char* name;
+	int x;
+	int y;
+} pos;
 
 meme** readMemeFile(char* file);
 
