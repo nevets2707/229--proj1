@@ -1,7 +1,7 @@
 # Make file for project 1
 
 
-all : crop bw overlay colorshift meme
+all : bw colorshift meme
 
 clean : 
 	rm *.o bw crop colorshift overlay 
@@ -30,6 +30,7 @@ colorshift.o : colorshift.c saveFile.o image.o
 
 #crop : crop.o openFile.o
 #	gcc -ansi -pedantic -o crop crop.o openFile.o saveFile.o image.o
+
 	
 bw : bw.o openFile.o
 	gcc -ansi -pedantic -o bw bw.o openFile.o saveFile.o image.o

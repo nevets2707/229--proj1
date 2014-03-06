@@ -74,10 +74,11 @@ int main(int argc, char** argv)
 
 image* crop(char* file, int x, int y, int w, int h)
 {
+	
+
+	int i, j;
 	image* img;
 	image* img2;
-	int i, j;
-
 	
 	img = open(file);
 	
@@ -102,7 +103,7 @@ image* crop(char* file, int x, int y, int w, int h)
 			img2->pix[i][j].alpha = img->pix[i + y][j + x].alpha;
 		}
 	}
-
-	freeImg(img);
+	
+	free(img);
 	return img2;
 }

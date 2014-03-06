@@ -121,7 +121,7 @@ meme** readMemeFile(char* file)
 		{
 			/* make array of fonts maybe */
 			fonts = (font**)malloc(wordCount * sizeof(font*));
-			for(i = 0; i < wordCount - 1; i++)
+			for(i = 0; i < wordCount; i++)
 			{
 				fonts[i] = malloc(sizeof(font));
 				length = strlen(buffer2);
@@ -175,7 +175,7 @@ meme** readMemeFile(char* file)
 						memes[i]->loc[j]->x = atoi(buffer2);
 
 						length = strlen(buffer2);
-						charPos += lentht + 1;
+						charPos += length + 1;
 						buffer2 = &(buffer[charPos]);
 
 						memes[i]->loc[j]->y = atoi(buffer2);
@@ -195,16 +195,20 @@ meme** readMemeFile(char* file)
 int readActFile(char* file, meme** memes)
 {
 	char* out;
-	int memeNum, fontNum;
+	int memeNum, fontNum, textNum;
 	char* top;
 	char* bot;
+	image** textLines;
 
 	char* buffer = (char*)malloc(128 * sizeof(char));
 	char* buffer2;
 	int i;
+	int length, size;
 	int charPos;
 	char c;
 	FILE* in = fopen(file, "r");
+	textLines = (image**)malloc(sizeof(image*));
+	textNum = 0;
 
 	if(in == 0)
 	{
@@ -244,32 +248,88 @@ int readActFile(char* file, meme** memes)
 		charPos = 0;
 		buffer2 = &(buffer[charPos]);
 	
+
+		memeNum = 0;
+		fontNum = 0;
 		if(strcmp(buffer2, "OUTFILE") == 0)
 		{
+			length = strlen(buffer2);
+			charPos += length + 1;
+			buffer2 = &(buffer[charPos]);
 
+			out = (char*)malloc(strlen(buffer2) * sizeof(char));
+			strcpy(out, buffer2);
 		}
 		else if(strcmp(buffer2, "MEME") == 0)
 		{
+			length = strlen(buffer2);
+			charPos += length + 1;
+			buffer2 = &(buffer[charPos]);
 
+			size = sizeof(memes) / sizeof(meme*); /* Does this work */
+			for(memeNum; memeNum <= size; memeNum++)
+			{
+				if(memeNum == size)
+				{
+					printf("Couldn't fine meme: %s", buffer2);
+					return 1;
+				}
+				if(strcmp(memes[memeNum]->name, buffer2) == 0)
+				{
+					break;
+				}
+			}
 		}
 		else if(strcmp(buffer2, "FONT") == 0)
 		{
+			length = strlen(buffer2);
+			charPos += length + 1;
+			buffer2 = &(buffer[charPos]);
 
-		}
-		else if(strcmp(buffer2, "TOP") == 0)
-		{
-
-		}
-		else if(strcmp(buffer2, "BOTTOM") == 0)
-		{
-
-		}
+			size = sizeof(memes[memeNum]->fonts) / sizeof(font*);
+			for(fontNum; fontNum <= size; fontNum++)
+			{
+				if(fontNum == size)
+				{
+					printf("Couldnt find font: %s", buffer2);
+					return 1;
+				}
+				if(strcmp(memes[memeNum]->fonts[fontNum]->name, buffer2) == 0)
+				{
+					break;
+				}	
+			}
+		}	
 		else
 		{
-			printf("%s is not a valid command\n", buffer2);
-			return 1;
+			size = sizeof(memes[memeNum]->loc) / sizeof(pos*);
+			for(i = 0; i <= size; i++)
+			{
+				if(i == size)
+				{
+					printf("%s is not a valid command\n", buffer2);
+					return 1;
+				}
+				if(strcmp(memes[memeNum]->loc[i]->name, buffer2) == 0)
+				{
+					length = strlen(buffer2);
+					charPos += length + 1;
+					buffer2 = &(buffer[charPos]);
+
+					textLines = realloc(textLines, sizeof(textLines) + sizeof(image*));
+					/* make new image with textImg() */
+					textLines[textNum] = (image*)malloc(sizeof(image));
+					textLines[textNum] = textImg(buffer2, memes[memeNum], memes[memeNum]->fonts[fontNum]);	
+
+					break;
+				}
+			}
 		}
 	}
+
+	/* Overlay all of the textLines to the image file, out
+	 * find the position by x - (textLines->width / 2) and 
+	 * y - (textLines->height / 2) (probably) */
 
 }
 
@@ -308,6 +368,7 @@ image* textImg(char* in, meme* m, font* f)
 void addText(image* toChange, image* toAdd)
 {
 	int i, x, y;
+	int x2, y2;
 	x = toChange->width;
 	y = toChange->height;
 	
@@ -321,6 +382,20 @@ void addText(image* toChange, image* toAdd)
 		toChange->pix[i] = (pixel*)realloc(toChange->pix[i], sizeof(toChange->pix[i]) + (toAdd->width * sizeof(pixel)));
 	}
 
-	
-	
+	x2 = 0;
+	y2 = 0;
+	for(x; x < toChange->width; x++)
+	{
+		y2 = 0;
+		for(y; y < toChange->height; y++)
+		{
+			toChange->pix[x][y].red = toAdd->pix[x2][y2].red;
+			toChange->pix[x][y].green = toAdd->pix[x2][y2].green;
+			toChange->pix[x][y].blue = toAdd->pix[x2][y2].blue;
+			toChange->pix[x][y].alpha = toAdd->pix[x2][y2].alpha;
+			y2++;
+		}
+		x2++;
+	}
+	return;
 }
