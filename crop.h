@@ -1,3 +1,4 @@
+#include "image.h"
 
 #ifndef __CROP_H_
 #define __CROP_H_

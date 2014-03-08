@@ -8,7 +8,7 @@ typedef struct font_s
 	char* name;
 	char* fileLocation;
 	int charCount;
-	letter* list;
+	letter** list;
 
 } font;
 

@@ -7,7 +7,9 @@
 font* openFont(char* file)
 {
 	int i;
+	int charPos, length;
 	int count, line;
+	int size;
 	char c;
 	char* temp;
 	char* temp2;
@@ -19,9 +21,10 @@ font* openFont(char* file)
 		printf("Couldn't open the font file\n");
 		return;
 	}
-
+	
+	size = 0;
 	newFont = (font*)malloc(sizeof(font));
-	newFont->list = (letter*)malloc(0);
+	newFont->list = (letter**)malloc(size);
 	temp = (char*)malloc(128 * sizeof(char));
 
 	newFont->charCount = 0;
@@ -45,36 +48,69 @@ font* openFont(char* file)
 		}
 		temp[count] = 0;
 
-		temp2 = temp;
+		i = 0;
+		while(temp[i] != 0)
+		{
+			if(temp[i] == ' ' || temp[i] == ':')
+			{
+				temp[i] = 0;
+			}
+			i++;
+		}
+
+		charPos = 0;
+		temp2 = &(temp[charPos]);
 		if(strcmp(temp2, "NAME") == 0)
 		{
-			temp2 = temp2 + strlen(temp2) + 1;
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2 = &(temp[charPos]);
 			newFont->name = (char*)malloc(strlen(temp2) + 1 * sizeof(char));
-			newFont->name = temp2;
+			strcpy(newFont->name, temp2);
 			printf("%s\n", newFont->name);
 		}
 		else if(strcmp(temp2, "IMAGE") == 0)
 		{
-			temp2 = temp2 + strlen(temp2) + 1;
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2= &(temp[charPos]);
 			newFont->fileLocation = (char*)malloc(strlen(temp2) + 1 * sizeof(char));
-			newFont->fileLocation = temp2;
+			strcpy(newFont->fileLocation, temp2);
 		
 		}
-		else if(strcmp(temp2, "CHARACTER") == 0) /*Account for wildcard char */
+		else if(strncmp(temp2, "CHARACTER", 9) == 0)
 		{
 			/* realloc memory for the list of letters and adds data from the line */
-			newFont->list = (letter*)realloc(newFont->list, sizeof(newFont->list) + sizeof(letter));
+			size += sizeof(letter*);
+			newFont->list = (letter**)realloc(newFont->list, size);
 			
-			newFont->list[line].value = temp2[9];
+			newFont->list[line] = (letter*)malloc(sizeof(letter));
 			
-			temp2 = temp2 + strlen(temp2) + 1;
-			newFont->list[line].x = atoi(temp2);
-			temp2 = temp2 + strlen(temp2) + 1;
-			newFont->list[line].y = atoi(temp2);
-			temp2 = temp2 + strlen(temp2) + 1;
-			newFont->list[line].w = atoi(temp2);
-			temp2 = temp2 + strlen(temp2) + 1;
-			newFont->list[line].h = atoi(temp2);
+			if(temp2[9] == 0)
+			{
+				temp2[9] = ' ';
+			}
+			newFont->list[line]->value = temp2[9];
+		
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2 = &(temp[charPos]);
+			newFont->list[line]->x = atoi(temp2);
+	
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2 = &(temp[charPos]);		
+			newFont->list[line]->y = atoi(temp2);
+
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2 = &(temp[charPos]);
+			newFont->list[line]->w = atoi(temp2);
+	
+			length = strlen(temp2);
+			charPos += length + 1;
+			temp2 = &(temp[charPos]);
+			newFont->list[line]->h = atoi(temp2);
 
 			line++;
 		}

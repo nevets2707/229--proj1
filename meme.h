@@ -10,6 +10,7 @@ typedef struct meme_s
 {
 	char* name;
 	char* file;
+	int locCount;
 	pos** loc;
 	font** fonts; /* maybe */
 } meme;
