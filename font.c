@@ -53,7 +53,10 @@ font* openFont(char* file)
 		{
 			if(temp[i] == ' ' || temp[i] == ':')
 			{
-				temp[i] = 0;
+				if(temp[i + 1] != ':')
+				{
+					temp[i] = 0;
+				}
 			}
 			i++;
 		}
@@ -86,10 +89,7 @@ font* openFont(char* file)
 			
 			newFont->list[line] = (letter*)malloc(sizeof(letter));
 			
-			if(temp2[9] == 0)
-			{
-				temp2[9] = ' ';
-			}
+
 			newFont->list[line]->value = temp2[9];
 		
 			length = strlen(temp2);

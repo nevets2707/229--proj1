@@ -278,10 +278,11 @@ int readActFile(char* file, meme** memes)
 			charPos += length + 1;
 			buffer2 = &(buffer[charPos]);
 
-			size = sizeof(memes) / sizeof(meme*); /* Does this work */
-			for(memeNum; memeNum <= size; memeNum++)
+			size = sizeof(memes) / sizeof(meme*); /* DOES NOT WORK ALWAYS 1 */
+	/*		for(memeNum; memeNum <= size; memeNum++) */
+			while(1)
 			{
-				if(memeNum == size)
+				if(memes[memeNum]->name == 0)
 				{
 					printf("Couldn't find meme: %s\n", buffer2);
 					return 1;
@@ -291,6 +292,7 @@ int readActFile(char* file, meme** memes)
 					m = open(memes[memeNum]->file);
 					break;
 				}
+				memeNum++;
 			}
 		}
 		else if(strcmp(buffer2, "FONT") == 0)
@@ -299,7 +301,7 @@ int readActFile(char* file, meme** memes)
 			charPos += length + 1;
 			buffer2 = &(buffer[charPos]);
 
-			size = sizeof(memes[memeNum]->fonts) / sizeof(font*);
+			size = sizeof(memes[memeNum]->fonts) / sizeof(font*); /*DOES NOT WORK */
 			for(fontNum; fontNum <= size; fontNum++)
 			{
 				if(fontNum == size)
@@ -332,13 +334,13 @@ int readActFile(char* file, meme** memes)
 					textLines = realloc(textLines, sizeof(textLines) + sizeof(image*));
 					/* make new image with textImg() */
 					textLines[textNum] = (image*)malloc(sizeof(image));
-					textLines[textNum] = textImg(buffer2, memes[memeNum], memes[memeNum]->fonts[fontNum]);	
+					textLines[textNum] = textImg(buffer2, memes[memeNum]->fonts[fontNum]);	
 					if(textLines[textNum] == 0)
 					{
 						return 1;
 					}
 					x = memes[memeNum]->loc[i]->x - (textLines[textNum]->width / 2);
-					y = memes[memeNum]->loc[i]->y - (textLines[textNum]->height / 2);
+					y = memes[memeNum]->loc[i]->y - (textLines[textNum]->height);
 					m = overlay(m, textLines[textNum], x, y);
 					break;
 				}
@@ -354,7 +356,7 @@ int readActFile(char* file, meme** memes)
 	
 }
 
-image* textImg(char* in, meme* m, font* f)
+image* textImg(char* in, font* f)
 {
 	image* text;
 	image* nextLetter;
@@ -376,9 +378,9 @@ image* textImg(char* in, meme* m, font* f)
 		
 			if(in[i] == f->list[j]->value)
 			{
-				nextLetter = crop(f->fileLocation, f->list[j]->x, f->list[j]->y, f->list[j]->w, f->list[j]->h);	
+				nextLetter = crop(f->fileLocation, f->list[j]->x, f->list[j]->y, f->list[j]->w, f->list[j]->h);	;
 				/* add to text image */
-				addText(text, nextLetter);			
+				text = addText(text, nextLetter);			
 				break;
 			}
 		}
@@ -386,11 +388,12 @@ image* textImg(char* in, meme* m, font* f)
 	return text;
 }
 
-void addText(image* toChange, image* toAdd)
+
+image* addText(image* toChange, image* toAdd)
 {
 	int i, x, y;
-	int x2, y2;
-	x = toChange->width;
+	int x2, y2, oldWidth;
+	oldWidth = toChange->width;
 	y = toChange->height;
 	
 	toChange->width += toAdd->width;
@@ -400,23 +403,23 @@ void addText(image* toChange, image* toAdd)
 	
 	for(i = 0; i < toChange->height; i++)
 	{
-		toChange->pix[i] = (pixel*)realloc(toChange->pix[i], toChange->width);
+		toChange->pix[i] = (pixel*)realloc(toChange->pix[i], toChange->width * sizeof(pixel));
 	}
 
 	x2 = 0;
 	y2 = 0;
-	for(x; x < toChange->width; x++)
+	for(y = 0; y < toChange->height; y++)
 	{
-		y2 = 0;
-		for(y; y < toChange->height; y++)
+		x2 = 0;
+		for(x = oldWidth; x < toChange->width; x++)
 		{
-			toChange->pix[x][y].red = toAdd->pix[x2][y2].red;
-			toChange->pix[x][y].green = toAdd->pix[x2][y2].green;
-			toChange->pix[x][y].blue = toAdd->pix[x2][y2].blue;
-			toChange->pix[x][y].alpha = toAdd->pix[x2][y2].alpha;
-			y2++;
+			toChange->pix[y][x].red = toAdd->pix[y2][x2].red;
+			toChange->pix[y][x].green = toAdd->pix[y2][x2].green;
+			toChange->pix[y][x].blue = toAdd->pix[y2][x2].blue;
+			toChange->pix[y][x].alpha = toAdd->pix[y2][x2].alpha;
+			x2++;
 		}
-		x2++;
+		y2++;
 	}
-	return;
+	return toChange;
 }

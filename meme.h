@@ -24,8 +24,8 @@ struct pos_s
 
 meme** readMemeFile(char* file);
 int readActFile(char* file, meme** memes);
-image* textImg(char* in, meme* m, font* f);
-void addText(image* toChange, image* toAdd);
+image* textImg(char* in, font* f);
+image* addText(image* toChange, image* toAdd);
 
 #endif
 
