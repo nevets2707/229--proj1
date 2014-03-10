@@ -12,6 +12,7 @@
 int main(int argc, char** argv)
 {
 	int i;
+	int memeC;
 	meme** memes;
 
 	if(argc != 3)
@@ -26,11 +27,14 @@ int main(int argc, char** argv)
 	{
 		return 0;
 	}
-	i = readActFile(argv[2], memes);
+	memeC = memeCounter(argv[1]);
+	i = readActFile(argv[2], memes, memeC);
 	if(i == 1)
 	{
-		return 1;
+		return 0;
 	}
+
+	freeMemeDP(memes, memeC);
 
 	return 0;
 }
@@ -41,6 +45,7 @@ meme** readMemeFile(char* file)
 	char* buffer = (char*)malloc(128 * sizeof(char));
 	char* buffer2;
 	char c;
+	int fontC = 0;
 	int wordCount = 1;
 	int i = 0;
 	int j;
@@ -53,7 +58,7 @@ meme** readMemeFile(char* file)
 		printf("Invalid file %s\n", file);
 		return memes;
 	}
-	printf("File to open is %s\n", file);
+
 
 	c = getc(in);
 	while(c != EOF){
@@ -77,7 +82,7 @@ meme** readMemeFile(char* file)
 		}
 		buffer[i] = 0;
 		i = 0;
-		printf("Line is %s\n", buffer);
+	
 
 		/* POSSIBLE ERROR: next line shorter than prev line =>
 		 * extra chars on the line that arn't supposed to be there */
@@ -129,6 +134,7 @@ meme** readMemeFile(char* file)
 				charPos +=  length + 1;
 				buffer2 = &(buffer[charPos]);
 				fonts[i] = openFont(buffer2);
+				fontC++;
 			}
 		}
 		/* check if meme data */
@@ -139,7 +145,7 @@ meme** readMemeFile(char* file)
 			{
 				if(i == size)
 				{
-					printf("File Error \n");
+					printf("File Error. Command %s is not valid\n", buffer2);
 					memes = 0;
 					return memes;
 				}
@@ -189,20 +195,23 @@ meme** readMemeFile(char* file)
 		}
 	}
 	for(i = 0; i < size; i++)
-	{
-		size2 = sizeof(fonts) / sizeof(font*);
-		memes[i]->fonts = (font**)malloc(sizeof(fonts));
+	{	
+		memes[i]->fonts = (font**)malloc(sizeof(fonts)); 
 		/* memes[i]->fonts = fonts;  definitely gonna be a problem */
 		/* I think I'm only making a shallow copy so I only get the 
 		 * font array not the values too */
-		for(j = 0; j < size2; j++)
+		for(j = 0; j < fontC; j++)
 		{
+			memes[i]->fontCount = fontC;
 			memes[i]->fonts[j] = fonts[j];
 		}
 	}
+/*	free(in);
+	free(buffer); */
+/*	freeFontDP(fonts, fontC); */
 	return memes;
 }
-int readActFile(char* file, meme** memes)
+int readActFile(char* file, meme** memes, int memeCount)
 {
 	char* out;
 	int memeNum, fontNum, textNum;
@@ -220,6 +229,8 @@ int readActFile(char* file, meme** memes)
 	FILE* in = fopen(file, "r");
 	textLines = (image**)malloc(sizeof(image*));
 	textNum = 0;
+	memeNum = 0;
+	fontNum = 0;
 
 	if(in == 0)
 	{
@@ -247,7 +258,7 @@ int readActFile(char* file, meme** memes)
 			continue;
 		}
 		i = 0;
-		printf("Line is %s\n", buffer);
+		
 		while(buffer[i] != 0)
 		{
 			if(buffer[i] == ':')
@@ -261,8 +272,6 @@ int readActFile(char* file, meme** memes)
 		buffer2 = &(buffer[charPos]);
 	
 
-		memeNum = 0;
-		fontNum = 0;
 		if(strcmp(buffer2, "OUTFILE") == 0)
 		{
 			length = strlen(buffer2);
@@ -278,11 +287,9 @@ int readActFile(char* file, meme** memes)
 			charPos += length + 1;
 			buffer2 = &(buffer[charPos]);
 
-			size = sizeof(memes) / sizeof(meme*); /* DOES NOT WORK ALWAYS 1 */
-	/*		for(memeNum; memeNum <= size; memeNum++) */
-			while(1)
+			for(memeNum; memeNum <= memeCount; memeNum++)
 			{
-				if(memes[memeNum]->name == 0)
+				if(memeNum == memeCount) /* THIS ALSO DOESNT WORK */
 				{
 					printf("Couldn't find meme: %s\n", buffer2);
 					return 1;
@@ -292,7 +299,7 @@ int readActFile(char* file, meme** memes)
 					m = open(memes[memeNum]->file);
 					break;
 				}
-				memeNum++;
+			
 			}
 		}
 		else if(strcmp(buffer2, "FONT") == 0)
@@ -300,11 +307,10 @@ int readActFile(char* file, meme** memes)
 			length = strlen(buffer2);
 			charPos += length + 1;
 			buffer2 = &(buffer[charPos]);
-
-			size = sizeof(memes[memeNum]->fonts) / sizeof(font*); /*DOES NOT WORK */
-			for(fontNum; fontNum <= size; fontNum++)
+	
+			for(fontNum; fontNum <= memes[memeNum]->fontCount; fontNum++)
 			{
-				if(fontNum == size)
+				if(fontNum == memes[memeNum]->fontCount)
 				{
 					printf("Couldn't find font: %s\n", buffer2);
 					return 1;
@@ -353,7 +359,18 @@ int readActFile(char* file, meme** memes)
 	 * y - (textLines->height / 2) (probably) */
 	
 	save(m, out);
-	
+/*	free(out);
+	freeImg(m);
+	free(buffer);
+	free(buffer2);
+	free(in); 
+	for(i = 0; i < textNum; i++)
+	{
+		freeImg(textLines[i]);
+	}
+	free(textLines);
+*/
+	return 0;
 }
 
 image* textImg(char* in, font* f)
@@ -395,8 +412,15 @@ image* addText(image* toChange, image* toAdd)
 	int x2, y2, oldWidth;
 	oldWidth = toChange->width;
 	y = toChange->height;
-	
+	if(toChange->width == 1)
+	{
+		oldWidth = 0;
+		toChange->width = toAdd->width;
+	}
+	else
+	{
 	toChange->width += toAdd->width;
+	}
 /*	toChange->height += toAdd->height; */
 
 /*	toChange->pix = (pixel**)realloc(toChange->pix, toChange->height); */
@@ -422,4 +446,83 @@ image* addText(image* toChange, image* toAdd)
 		y2++;
 	}
 	return toChange;
+}
+
+int memeCounter(char* file)
+{
+	int count;
+	FILE* in = fopen(file, "r");
+	char c;
+	char* buffer;
+	int i;
+	int wordCount;
+	char* buffer2;
+	int charPos;
+
+	buffer = (char*)malloc(128);
+
+	c = getc(in);
+	while(c != EOF)
+	{
+		for(i = 0; i < 128; i++)
+			{
+				buffer[i] = 0;
+			}
+		i = 0;
+		while(c != '\n' && c != EOF)
+		{
+			buffer[i] = c;
+			i++;
+			c = getc(in);
+		}
+		if(strlen(buffer) == 0)
+		{
+			continue;
+		}
+		if(c == '\n')
+		{
+			c = getc(in);
+		}
+		buffer[i] = 0;
+		i = 0;
+		wordCount = 0;
+		while(buffer[i] != 0)
+		{
+			if(buffer[i] == ' ' || buffer[i] == ':')
+			{
+				buffer[i] = 0;
+				wordCount++;
+			}
+			i++;
+		}
+			
+		charPos = 0;
+		buffer2 = &(buffer[charPos]);
+		
+		if(strcmp("MEMES", buffer2) == 0)
+		{
+			return wordCount;
+		}	
+	}
+}
+
+void freeMemeDP(meme** m, int count)
+{
+	int i, j, k;
+	for(i = 0; i < count; i++)
+	{
+		free(m[i]->name);
+		free(m[i]->file);
+	
+		for(j = 0; j < m[i]->locCount; j++)
+		{
+			free(m[i]->loc[j]->name);
+			free(m[i]->loc[j]);
+		}
+		free(m[i]->loc);
+
+		
+	}
+	freeFontDP(m[0]->fonts, m[0]->fontCount);
+	free(m);
 }

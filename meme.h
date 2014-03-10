@@ -11,6 +11,7 @@ typedef struct meme_s
 	char* name;
 	char* file;
 	int locCount;
+	int fontCount;
 	pos** loc;
 	font** fonts; /* maybe */
 } meme;
@@ -23,9 +24,10 @@ struct pos_s
 };
 
 meme** readMemeFile(char* file);
-int readActFile(char* file, meme** memes);
+int memeCounter(char* file);
+int readActFile(char* file, meme** memes, int memeCount);
 image* textImg(char* in, font* f);
 image* addText(image* toChange, image* toAdd);
-
+void freeMemeDP(meme** m, int count);
 #endif
 

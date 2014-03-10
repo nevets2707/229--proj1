@@ -51,7 +51,8 @@ meme : font.o meme.o image.o crop.o overlay.o openFile.o saveFile.o
 	gcc -ansi -pedantic -o meme font.o meme.o image.o crop.o overlay.o openFile.o saveFile.o
 
 tarball : 
-	tar czf 978378401.tar.gzip *.c *.h Makefile README
+	tar czf srmonson.tar.gzip *.c *.h Makefile README
 
-test : test.c font.o crop.o overlay.o
-	gcc -ansi -pedantic -g -o test test.c font.o image.o crop.o overlay.o openFile.o saveFile.o
+valGrind :
+	valgrind --leak-check=full --dsymutil=yes --show-reachable=yes ./meme memes.mem insaneproject.act
+

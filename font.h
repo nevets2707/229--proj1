@@ -13,5 +13,5 @@ typedef struct font_s
 } font;
 
 font* openFont(char* file);
-
+void freeFontDP(font** f, int count);
 #endif

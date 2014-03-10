@@ -70,7 +70,7 @@ font* openFont(char* file)
 			temp2 = &(temp[charPos]);
 			newFont->name = (char*)malloc(strlen(temp2) + 1 * sizeof(char));
 			strcpy(newFont->name, temp2);
-			printf("%s\n", newFont->name);
+
 		}
 		else if(strcmp(temp2, "IMAGE") == 0)
 		{
@@ -120,3 +120,21 @@ font* openFont(char* file)
 	return newFont;
 }
 
+void freeFontDP(font** f, int count)
+{
+	int i, j;
+
+	for(i = 0; i < count; i++)
+	{
+		free(f[i]->name);
+		free(f[i]->fileLocation);
+		
+		for(j = 0; j < f[i]->charCount; j++)
+		{
+			free(f[i]->list[j]);
+		}
+		free(f[i]->list);
+
+	}
+	free(f);
+}
