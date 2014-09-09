@@ -21,11 +21,12 @@ image* open(char* file)
 	temp = (image*)malloc(sizeof(image));
 	infile = fopen(file, "rb");
 
-	while(infile == 0)
+	if(infile == 0)
 	{
-		printf("Invalid file: %s. Please enter a new file.\n>", file);
-		scanf("%s", newFile);
-		infile = fopen(newFile, "rb");
+		printf("Invalid file %s\n", file);
+		return temp;
+	
+
 	}
 		
 	if(!feof(infile))

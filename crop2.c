@@ -1,46 +1,20 @@
-/**
- *
- * File for cropping
- *
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "image.h"
 #include "pixel.h"
 #include "openFile.h"
 #include "saveFile.h"
+#include "crop2.h"
 
-
-int main(int argc, char** argv)
+image* crop(char* file, int x, int y, int w, int h)
 {
+	
+
+	int i, j;
 	image* img;
 	image* img2;
-	int i, j;
-	int x, y, w, h;
-	if(argc != 7)
-	{
-		printf("Invalid number of arguments. Please try again\n");
-		return 1;
-	}
 	
-	x = atoi(argv[3]);
-	y = atoi(argv[4]);
-	w = atoi(argv[5]);
-	h = atoi(argv[6]);
-
-	while(x < 0)
-	{
-		printf("Please enter a valid x position:\n>");
-		scanf("%d", &x);
-	}
-	while(y < 0)
-	{
-		printf("Please enter a valid y opsition:\n>");
-		scanf("%d", &y);
-	}
-	
-	img = open(argv[1]);
+	img = open(file);
 	
 	if(w + x > img->width)
 	{
@@ -63,10 +37,7 @@ int main(int argc, char** argv)
 			img2->pix[i][j].alpha = img->pix[i + y][j + x].alpha;
 		}
 	}
-
-	save(img2, argv[2]);
-	freeImg(img);
-	freeImg(img2);
-	return 0;
+	
+	free(img);
+	return img2;
 }
-

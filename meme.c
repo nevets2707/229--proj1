@@ -3,8 +3,8 @@
 #include <string.h>
 #include "openFile.h"
 #include "saveFile.h"
-#include "crop.h"
-#include "overlay.h"
+#include "crop2.h"
+#include "overlay2.h"
 #include "font.h"
 #include "meme.h"
 #include "image.h"

@@ -41,5 +41,6 @@ meme.c - main file that runs infile methods to open the .mem file and the .act f
 	readActFile - takes a string to a file, a meme double pointer and the number of memes in the dobule pointer, reads the act file line by line, seperates each line into individual words, if the first word in a line is a keyword then it saves the coresponding data, if the first word is a meme then it performs the action specified, after going through the entire file it overlays all of the text images to the specified image and saves it to the specified location
 		textImg - run if readActFile finds a command to add text, takes in a string to create and a font, runs through each char in the string and checks if the font contains it, if the char is valid it crops the letter and adds it to the image* with addText
 			addText - takes two images, one for the sentance and one for the next letter, it adds the letters width the the sentence and adds its pixel data to the new part of the sentence
-
+crop2.c - Copy of the crop method without the main method so meme can use it
+overlay2.c - Copy of overlay without the main method so meme can use it
 5) No additional changes
